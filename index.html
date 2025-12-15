@@ -156,7 +156,7 @@ header{
 }
 .linea{
     display:grid;
-    grid-template-columns:40px 1fr 110px 40px;
+    grid-template-columns:40px 1fr 110px 40px 50px;
     align-items:center;
     padding:10px;
     border-bottom:1px solid #1e2330;
@@ -184,6 +184,20 @@ header{
     cursor:pointer;
     background:#121722;
     font-size:24px;
+}
+
+/* ========== BOTON ELIMINAR ========== */
+.delete-btn{
+    background:#ff4d4d;
+    border:none;
+    color:#fff;
+    border-radius:6px;
+    cursor:pointer;
+    padding:4px 8px;
+    font-size:14px;
+}
+.delete-btn:hover{
+    background:#ff1a1a;
 }
 
 /* ========== FELICIDADES ========== */
@@ -365,8 +379,15 @@ function crearLinea(){
             <option value="alta">🔴 Alta</option>
         </select>
         <div class="check" onclick="toggleCheck(this)">☐</div>
+        <button class="delete-btn" onclick="eliminarLinea(this)">🗑️</button>
     `;
     editor.appendChild(l);
+}
+
+function eliminarLinea(btn){
+    const linea = btn.parentElement;
+    linea.remove();
+    updateProgress();
 }
 
 function setPrio(s){
@@ -453,4 +474,3 @@ function cerrarFinish(){
 
 </body>
 </html>
-
