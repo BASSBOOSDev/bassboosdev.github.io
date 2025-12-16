@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="icon.png" type="image/png">
 <link rel="manifest" href="manifest.json">
-<meta charset="UTF-8">
 <title>BASSBOOSDev</title>
 
 <style>
+/* ================= GENERAL ================= */
 body{
     margin:0;
     font-family:Consolas,monospace;
@@ -54,6 +56,7 @@ header{
     font-size:18px;
     outline:none;
     color:#cfd6ff;
+    word-break: break-word;
 }
 
 /* DERECHA */
@@ -69,6 +72,7 @@ header{
     padding:7px 14px;
     border-radius:10px;
     cursor:pointer;
+    white-space: nowrap;
 }
 
 /* ========== MODAL LINK ========== */
@@ -86,7 +90,8 @@ header{
     background:#0f1218;
     padding:20px;
     border-radius:14px;
-    width:340px;
+    width:90%;
+    max-width:340px;
 }
 
 .modal-box input{
@@ -138,6 +143,8 @@ header{
     border-radius:14px;
     display:flex;
     justify-content:space-between;
+    flex-wrap:wrap;
+    gap:10px;
 }
 .pomo-btn{
     background:#121722;
@@ -153,6 +160,7 @@ header{
     margin:20px;
     background:#0f1218;
     border-radius:14px;
+    overflow-x:auto;
 }
 .linea{
     display:grid;
@@ -160,6 +168,7 @@ header{
     align-items:center;
     padding:10px;
     border-bottom:1px solid #1e2330;
+    gap:5px;
 }
 .texto{outline:none;color:#cfd6ff;}
 .texto:empty::before{content:"Escribí acá...";color:#5f6a85;}
@@ -210,6 +219,8 @@ header{
     justify-content:center;
     z-index:20;
     text-align:center;
+    padding:20px;
+    box-sizing:border-box;
 }
 #finish button{
     margin-top:20px;
@@ -229,7 +240,7 @@ header{
     z-index:30;
 }
 
-/* ========== FOOTER (solo al bajar) ========== */
+/* ========== FOOTER ================= */
 .footer{
     margin-top:120px;
     background:#0f1218;
@@ -245,43 +256,76 @@ header{
     color:#5f6a85;
 }
 
-@keyframes scroll{
-    from{transform:translateX(100%);}
-    to{transform:translateX(-100%);}
-}
-
 .socials{
     margin-top:10px;
     display:flex;
     justify-content:center;
     gap:16px;
+    flex-wrap:wrap;
 }
 .socials a{
     color:#cfd6ff;
     text-decoration:none;
     font-size:14px;
 }
+
+/* ================== MEDIA QUERIES ================== */
+@media (max-width: 768px){
+    header{
+        grid-template-columns: 1fr 1fr;
+        padding:10px;
+    }
+    .header-left{
+        gap:5px;
+    }
+    .header-left img{
+        width:28px;
+        height:28px;
+    }
+    .project-name{
+        font-size:16px;
+    }
+    .header-buttons{
+        gap:5px;
+        justify-content:flex-end;
+    }
+    .header-btn{
+        padding:5px 10px;
+        font-size:14px;
+    }
+    .pomodoro{
+        flex-direction:column;
+        align-items:center;
+    }
+    .editor{
+        margin:10px;
+    }
+    .linea{
+        grid-template-columns:30px 1fr 80px 30px 40px;
+        padding:6px;
+    }
+    .add{
+        padding:10px;
+        font-size:20px;
+    }
+    .delete-btn{
+        padding:2px 6px;
+        font-size:12px;
+    }
+}
 </style>
 </head>
 
 <body>
-
 <canvas id="confetti"></canvas>
 
 <header>
-    <!-- IZQ -->
     <div class="header-left" onclick="logoInput.click()">
         <img id="logo">
         <span class="brand">BASSBOOSDev</span>
         <input type="file" id="logoInput" hidden accept="image/*">
     </div>
-
-    <!-- CENTRO -->
-    <div class="project-name" contenteditable id="projectName">
-        Título del proyecto
-    </div>
-
-    <!-- DER -->
+    <div class="project-name" contenteditable id="projectName">Título del proyecto</div>
     <div class="header-buttons">
         <button class="header-btn" onclick="openModal()">🔗 Link</button>
         <button class="header-btn" id="openBtn" style="display:none" onclick="openURL()">🚀 Abrir</button>
@@ -339,7 +383,8 @@ header{
 </div>
 
 <script>
-/* LOGO */
+// =================== JS ===================
+// LOGO
 logo.src=localStorage.getItem("logo")||"";
 logoInput.onchange=e=>{
     const r=new FileReader();
@@ -347,11 +392,11 @@ logoInput.onchange=e=>{
     r.readAsDataURL(e.target.files[0]);
 };
 
-/* TITULO */
+// TITULO
 projectName.textContent=localStorage.getItem("title")||projectName.textContent;
 projectName.oninput=()=>localStorage.setItem("title",projectName.textContent);
 
-/* LINK */
+// LINK
 function openModal(){modal.style.display="flex";}
 function closeModal(){modal.style.display="none";}
 function saveURL(){
@@ -362,7 +407,7 @@ function saveURL(){
 function openURL(){window.open(localStorage.getItem("url"),"_blank");}
 if(localStorage.getItem("url"))openBtn.style.display="inline-block";
 
-/* EDITOR */
+// EDITOR
 const editor=document.getElementById("editor");
 const progress=document.getElementById("progress");
 let finished=false;
@@ -384,59 +429,26 @@ function crearLinea(){
     editor.appendChild(l);
 }
 
-function eliminarLinea(btn){
-    const linea = btn.parentElement;
-    linea.remove();
-    updateProgress();
-}
-
-function setPrio(s){
-    const l=s.parentElement;
-    l.classList.remove("alta","media","baja");
-    l.classList.add(s.value);
-}
-
-function toggleCheck(c){
-    c.classList.toggle("completo");
-    c.textContent=c.textContent==="☐"?"✔":"☐";
-    updateProgress();
-}
-
+function eliminarLinea(btn){btn.parentElement.remove();updateProgress();}
+function setPrio(s){const l=s.parentElement;l.classList.remove("alta","media","baja");l.classList.add(s.value);}
+function toggleCheck(c){c.classList.toggle("completo");c.textContent=c.textContent==="☐"?"✔":"☐";updateProgress();}
 function updateProgress(){
     const t=document.querySelectorAll(".check").length;
     const d=document.querySelectorAll(".check.completo").length;
     progress.style.width=(d/t*100||0)+"%";
-    if(d===t && t>0 && !finished){
-        finished=true;
-        finish.style.display="flex";
-        lanzarConfeti();
-    }
+    if(d===t && t>0 && !finished){finished=true;finish.style.display="flex";lanzarConfeti();}
 }
-
 for(let i=0;i<3;i++)crearLinea();
 
-/* POMODORO */
+// POMODORO
 let time=1500,run=false,int;
 const timeEl=document.getElementById("time");
-function updateTime(){
-    timeEl.textContent=
-    String(Math.floor(time/60)).padStart(2,"0")+":"+
-    String(time%60).padStart(2,"0");
-}
-function togglePomo(){
-    if(!run){
-        run=true;playBtn.textContent="⏸";
-        int=setInterval(()=>{time--;updateTime();},1000);
-    }else{
-        run=false;playBtn.textContent="▶";clearInterval(int);
-    }
-}
-function resetPomo(){
-    clearInterval(int);run=false;time=1500;playBtn.textContent="▶";updateTime();
-}
+function updateTime(){timeEl.textContent=String(Math.floor(time/60)).padStart(2,"0")+":"+String(time%60).padStart(2,"0");}
+function togglePomo(){if(!run){run=true;playBtn.textContent="⏸";int=setInterval(()=>{time--;updateTime();},1000);}else{run=false;playBtn.textContent="▶";clearInterval(int);}}
+function resetPomo(){clearInterval(int);run=false;time=1500;playBtn.textContent="▶";updateTime();}
 updateTime();
 
-/* CONFETI */
+// CONFETI
 const canvas=document.getElementById("confetti");
 const ctx=canvas.getContext("2d");
 canvas.width=innerWidth;
@@ -444,34 +456,17 @@ canvas.height=innerHeight;
 let conf=[];
 function lanzarConfeti(){
     for(let i=0;i<150;i++){
-        conf.push({
-            x:Math.random()*canvas.width,
-            y:Math.random()*canvas.height,
-            r:Math.random()*6+2,
-            c:`hsl(${Math.random()*360},100%,50%)`,
-            s:Math.random()*3+2
-        });
+        conf.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*6+2,c:`hsl(${Math.random()*360},100%,50%)`,s:Math.random()*3+2});
     }
     animar();
 }
 function animar(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    conf.forEach(p=>{
-        ctx.fillStyle=p.c;
-        ctx.beginPath();
-        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-        ctx.fill();
-        p.y+=p.s;
-        if(p.y>canvas.height)p.y=0;
-    });
+    conf.forEach(p=>{ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();p.y+=p.s;if(p.y>canvas.height)p.y=0;});
     if(conf.length)requestAnimationFrame(animar);
 }
-function cerrarFinish(){
-    finish.style.display="none";
-    conf=[];
-}
+function cerrarFinish(){finish.style.display="none";conf=[];}
 </script>
-
 </body>
 </html>
 
