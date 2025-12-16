@@ -317,6 +317,7 @@ header{
         <input type="file" id="logoInput" hidden accept="image/*">
     </div>
     <div class="project-name" contenteditable id="projectName">Título del proyecto</div>
+    <div class="header-buttons" id="headerButtons"></div>
 </header>
 
 <div class="progress-box">
@@ -349,6 +350,17 @@ header{
 <button class="lua-save" onclick="guardarLuaScript()">Guardar</button>
 <button class="lua-new" onclick="nuevoLuaScript()">Nuevo</button>
 <button class="lua-load" onclick="cargarLuaScript()">Abrir</button>
+
+<!-- MODAL LINK -->
+<div id="linkModal" class="modal">
+    <div class="modal-box">
+        <input type="text" id="linkInput" placeholder="Pega el URL aquí">
+        <div style="display:flex;justify-content:flex-end;gap:10px;">
+            <button onclick="guardarLink()">Aceptar</button>
+            <button onclick="cerrarLinkModal()">Cancelar</button>
+        </div>
+    </div>
+</div>
 
 <!-- FOOTER -->
 <div class="footer">
@@ -523,7 +535,6 @@ function guardarLuaScript(){
     if(!title) return;
     luaScripts[title]=code;
     localStorage.setItem("luaScripts",JSON.stringify(luaScripts));
-    // Descargar como .lua
     const blob=new Blob([code],{type:"text/plain"});
     const a=document.createElement("a");
     a.href=URL.createObjectURL(blob);
@@ -571,6 +582,30 @@ luaConsole.addEventListener("keydown",e=>{
     }
 });
 luaConsole.addEventListener("input",aplicarResaltado);
+
+// ================= LINK HEADER DERECHO =================
+const headerButtons=document.getElementById("headerButtons");
+const linkBtn=document.createElement("button");
+linkBtn.textContent="🔗 Link";
+linkBtn.className="header-btn";
+linkBtn.onclick=()=>document.getElementById("linkModal").style.display="flex";
+headerButtons.appendChild(linkBtn);
+
+function cerrarLinkModal(){document.getElementById("linkModal").style.display="none";}
+function guardarLink(){
+    const url=document.getElementById("linkInput").value.trim();
+    if(!url){alert("Ingresá un URL válido"); return;}
+    localStorage.setItem("proyectoLink",url);
+    alert("URL guardado!"); cerrarLinkModal();
+    if(!document.getElementById("openLinkBtn")){
+        const btn=document.createElement("button");
+        btn.id="openLinkBtn";
+        btn.className="header-btn";
+        btn.textContent="Abrir";
+        btn.onclick=()=>window.open(localStorage.getItem("proyectoLink"),"_blank");
+        headerButtons.appendChild(btn);
+    }
+}
 </script>
 </body>
 </html>
