@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BASSBOOSDev</title>
 <link rel="icon" href="icon.png" type="image/png">
 <link rel="manifest" href="manifest.json">
-<title>BASSBOOSDev</title>
 
 <style>
 /* ================= GENERAL ================= */
@@ -22,7 +22,7 @@ body{
 /* ========== HEADER ========== */
 header{
     display:grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns:auto 1fr auto;
     align-items:center;
     padding:14px 20px;
     background:#11141b;
@@ -38,7 +38,6 @@ header{
     gap:10px;
     cursor:pointer;
 }
-
 .header-left img{
     width:36px;
     height:36px;
@@ -46,7 +45,6 @@ header{
     object-fit:cover;
     background:#1e2330;
 }
-
 .brand{
     font-weight:bold;
     letter-spacing:1px;
@@ -67,7 +65,6 @@ header{
     display:flex;
     gap:10px;
 }
-
 .header-btn{
     background:#121722;
     border:1px solid #1e2330;
@@ -88,7 +85,6 @@ header{
     justify-content:center;
     z-index:10;
 }
-
 .modal-box{
     background:#0f1218;
     padding:20px;
@@ -96,7 +92,6 @@ header{
     width:90%;
     max-width:340px;
 }
-
 .modal-box input{
     width:100%;
     padding:10px;
@@ -105,13 +100,11 @@ header{
     background:#121722;
     color:#cfd6ff;
 }
-
 .modal-actions{
     display:flex;
     gap:10px;
     margin-top:12px;
 }
-
 .modal-actions button{
     flex:1;
     padding:8px;
@@ -119,12 +112,13 @@ header{
     border-radius:8px;
     cursor:pointer;
 }
-
 .accept{background:#00ff9c;color:#000;}
 .cancel{background:#1e2330;color:#cfd6ff;}
 
 /* ========== PROGRESS ========== */
-.progress-box{ margin:20px; }
+.progress-box{
+    margin:20px;
+}
 .progress-bar{
     height:10px;
     background:#1e2330;
@@ -174,22 +168,18 @@ header{
     gap:5px;
 }
 .texto{outline:none;color:#cfd6ff;}
-.texto:empty::before{content:"Escribí acá...";color:#5f6a85;white-space:nowrap;}
-
+.texto:empty::before{content:"Escribí acá...";color:#5f6a85;}
 .prio{
     background:#121722;
     border:none;
     color:#cfd6ff;
     border-radius:6px;
 }
-
 .alta{border-left:4px solid #ff4d4d;}
 .media{border-left:4px solid #ffd84d;}
 .baja{border-left:4px solid #4dff88;}
-
 .check{cursor:pointer;text-align:center;font-size:18px;}
 .check.completo{color:#00ff9c;}
-
 .add{
     text-align:center;
     padding:14px;
@@ -197,8 +187,6 @@ header{
     background:#121722;
     font-size:24px;
 }
-
-/* ========== BOTON ELIMINAR ========== */
 .delete-btn{
     background:#ff4d4d;
     border:none;
@@ -245,18 +233,18 @@ header{
 
 /* ========== FOOTER ================= */
 .footer{
-    margin-top:auto;
+    margin-top:20px;
     background:#0f1218;
     padding:14px;
     text-align:center;
+    position:sticky;
+    bottom:0;
 }
-
 .marquee{
     white-space:nowrap;
     animation:scroll 25s linear infinite;
     color:#5f6a85;
 }
-
 .socials{
     margin-top:10px;
     display:flex;
@@ -268,55 +256,30 @@ header{
     color:#cfd6ff;
     text-decoration:none;
     font-size:14px;
-}
 
-/* ================== MEDIA QUERIES ================== */
+/* ================== MEDIA QUERIES CELULAR ================== */
 @media (max-width: 768px){
     header{
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: auto 1fr auto;
         padding:10px;
     }
-    .header-left{
-        gap:5px;
-    }
-    .header-left img{
-        width:28px;
-        height:28px;
-    }
-    .project-name{
-        font-size:16px;
-    }
-    .header-buttons{
-        gap:5px;
-        justify-content:flex-end;
-    }
-    .header-btn{
-        padding:5px 10px;
-        font-size:14px;
-    }
+    .header-left img{width:28px;height:28px;}
+    .project-name{font-size:16px;}
+    .header-btn{padding:5px 10px;font-size:14px;}
     .pomodoro{
         flex-direction:column;
         align-items:center;
     }
-    .editor{
-        margin:10px;
-    }
+    .editor{margin:10px;}
     .linea{
         grid-template-columns:30px 1fr 80px 30px 40px;
         padding:6px;
     }
-    .add{
-        padding:10px;
-        font-size:20px;
-    }
-    .delete-btn{
-        padding:2px 6px;
-        font-size:12px;
-    }
+    .add{padding:10px;font-size:20px;}
+    .delete-btn{padding:2px 6px;font-size:12px;}
 }
 </style>
 </head>
-
 <body>
 <canvas id="confetti"></canvas>
 
@@ -348,7 +311,6 @@ header{
 <div class="editor" id="editor"></div>
 <div class="add" onclick="crearLinea()">＋</div>
 
-<!-- MODAL LINK -->
 <div class="modal" id="modal">
     <div class="modal-box">
         <input id="urlInput" placeholder="URL del proyecto Roblox">
@@ -359,7 +321,6 @@ header{
     </div>
 </div>
 
-<!-- FELICIDADES -->
 <div id="finish">
     <div>
         🎉 ¡FELICIDADES! PROYECTO COMPLETADO 🎉
@@ -368,7 +329,6 @@ header{
     </div>
 </div>
 
-<!-- FOOTER -->
 <div class="footer">
     <div class="marquee">
         🎮 Terminá lo que empezás • 🚀 Cada línea cuenta • 🧠 Aprender es avanzar • 🏆 Publicá sin miedo
@@ -384,36 +344,29 @@ header{
 </div>
 
 <script>
-// =================== JS ===================
-
 // LOGO
-logo.src = localStorage.getItem("logo") || "";
-logoInput.onchange = e => {
-    const r = new FileReader();
-    r.onload = () => {logo.src = r.result; localStorage.setItem("logo", r.result);}
+logo.src=localStorage.getItem("logo")||"";
+logoInput.onchange=e=>{
+    const r=new FileReader();
+    r.onload=()=>{logo.src=r.result;localStorage.setItem("logo",r.result);}
     r.readAsDataURL(e.target.files[0]);
 };
 
 // TITULO
-projectName.textContent = localStorage.getItem("title") || projectName.textContent;
-projectName.oninput = () => localStorage.setItem("title", projectName.textContent);
+projectName.textContent=localStorage.getItem("title")||projectName.textContent;
+projectName.oninput=()=>localStorage.setItem("title",projectName.textContent);
 
 // LINK
 function openModal(){modal.style.display="flex";}
 function closeModal(){modal.style.display="none";}
-function saveURL(){
-    localStorage.setItem("url", urlInput.value);
-    openBtn.style.display="inline-block";
-    closeModal();
-}
-function openURL(){window.open(localStorage.getItem("url"), "_blank");}
-if(localStorage.getItem("url")) openBtn.style.display="inline-block";
+function saveURL(){localStorage.setItem("url",urlInput.value);openBtn.style.display="inline-block";closeModal();}
+function openURL(){window.open(localStorage.getItem("url"),"_blank");}
+if(localStorage.getItem("url"))openBtn.style.display="inline-block";
 
 // EDITOR
 const editor=document.getElementById("editor");
 const progress=document.getElementById("progress");
 let finished=false;
-
 function crearLinea(){
     const l=document.createElement("div");
     l.className="linea baja";
@@ -426,31 +379,26 @@ function crearLinea(){
             <option value="alta">🔴 Alta</option>
         </select>
         <div class="check" onclick="toggleCheck(this)">☐</div>
-        <button class="delete-btn" onclick="eliminarLinea(this)">🗑️</button>
-    `;
+        <button class="delete-btn" onclick="eliminarLinea(this)">🗑️</button>`;
     editor.appendChild(l);
 }
-
-function eliminarLinea(btn){btn.parentElement.remove(); updateProgress();}
-function setPrio(s){const l=s.parentElement;l.classList.remove("alta","media","baja"); l.classList.add(s.value);}
-function toggleCheck(c){c.classList.toggle("completo"); c.textContent = c.textContent==="☐"?"✔":"☐"; updateProgress();}
+function eliminarLinea(btn){btn.parentElement.remove();updateProgress();}
+function setPrio(s){const l=s.parentElement;l.classList.remove("alta","media","baja");l.classList.add(s.value);}
+function toggleCheck(c){c.classList.toggle("completo");c.textContent=c.textContent==="☐"?"✔":"☐";updateProgress();}
 function updateProgress(){
     const t=document.querySelectorAll(".check").length;
     const d=document.querySelectorAll(".check.completo").length;
     progress.style.width=(d/t*100||0)+"%";
-    if(d===t && t>0 && !finished){finished=true; finish.style.display="flex"; lanzarConfeti();}
+    if(d===t && t>0 && !finished){finished=true;finish.style.display="flex";lanzarConfeti();}
 }
-for(let i=0;i<3;i++) crearLinea();
+for(let i=0;i<3;i++)crearLinea();
 
 // POMODORO
-let time=1500, run=false, int;
+let time=1500,run=false,int;
 const timeEl=document.getElementById("time");
 function updateTime(){timeEl.textContent=String(Math.floor(time/60)).padStart(2,"0")+":"+String(time%60).padStart(2,"0");}
-function togglePomo(){
-    if(!run){run=true; playBtn.textContent="⏸"; int=setInterval(()=>{time--; updateTime();},1000);}
-    else{run=false; playBtn.textContent="▶"; clearInterval(int);}
-}
-function resetPomo(){clearInterval(int); run=false; time=1500; playBtn.textContent="▶"; updateTime();}
+function togglePomo(){if(!run){run=true;playBtn.textContent="⏸";int=setInterval(()=>{time--;updateTime();},1000);}else{run=false;playBtn.textContent="▶";clearInterval(int);}}
+function resetPomo(){clearInterval(int);run=false;time=1500;playBtn.textContent="▶";updateTime();}
 updateTime();
 
 // CONFETI
@@ -460,29 +408,17 @@ canvas.width=innerWidth;
 canvas.height=innerHeight;
 let conf=[];
 function lanzarConfeti(){
-    for(let i=0;i<150;i++){
-        conf.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, r:Math.random()*6+2, c:`hsl(${Math.random()*360},100%,50%)`, s:Math.random()*3+2});
-    }
+    for(let i=0;i<150;i++){conf.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*6+2,c:`hsl(${Math.random()*360},100%,50%)`,s:Math.random()*3+2});}
     animar();
 }
 function animar(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    conf.forEach(p=>{
-        ctx.fillStyle=p.c; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
-        p.y+=p.s;
-        if(p.y>canvas.height) p.y=0;
-    });
-    if(conf.length) requestAnimationFrame(animar);
+    conf.forEach(p=>{ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();p.y+=p.s;if(p.y>canvas.height)p.y=0;});
+    if(conf.length)requestAnimationFrame(animar);
 }
-function cerrarFinish(){finish.style.display="none"; conf=[];}
-
-// Ajustar canvas al redimensionar
-window.addEventListener('resize', ()=>{
-    canvas.width=window.innerWidth;
-    canvas.height=window.innerHeight;
-});
-
+function cerrarFinish(){finish.style.display="none";conf=[];}
 </script>
+
 </body>
 </html>
 
