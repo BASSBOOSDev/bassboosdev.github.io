@@ -6,8 +6,8 @@
 <link rel="icon" href="icon.png" type="image/png">
 <title>BASSBOOSDev</title>
 <style>
-/* ============ PROGRESS BAR ============ */
-    .progress-box{
+/* ================= PROGRESS BAR ================= */
+.progress-box{
     margin: 20px;
     background: #121722;
     border-radius: 10px;
@@ -399,26 +399,42 @@ header{
 </div>
 
 <script>
-// ================= SIDEBAR =================
+// ================= VARIABLES =================
 const sidebar=document.getElementById("sidebar");
 const toggle=document.querySelector(".sidebar-toggle");
+const logo=document.getElementById("logo");
+const logoInput=document.getElementById("logoInput");
+const projectName=document.getElementById("projectName");
+const editor=document.getElementById("editor");
+const progress=document.getElementById("progress");
+const finish=document.getElementById("finish");
+const headerButtons=document.getElementById("headerButtons");
+
+let finished=false;
+let luaConsole=document.getElementById("luaConsoleFull");
+let luaCloseBtn=document.querySelector(".lua-close");
+let luaSaveBtn=document.querySelector(".lua-save");
+let luaNewBtn=document.querySelector(".lua-new");
+let luaLoadBtn=document.querySelector(".lua-load");
+let luaScripts=JSON.parse(localStorage.getItem("luaScripts")||"{}");
+let currentLuaTitle="Script1";
+
+// ================= SIDEBAR =================
 toggle.onclick=()=>sidebar.style.left=(sidebar.style.left=="0px"?"-280px":"0px");
 
 // ================= LOGO =================
-const logo=document.getElementById("logo");
-const logoInput=document.getElementById("logoInput");
 logo.src=localStorage.getItem("logo")||"";
-logoInput.onchange=e=>{const r=new FileReader();r.onload=()=>{logo.src=r.result;localStorage.setItem("logo",r.result);} ; r.readAsDataURL(e.target.files[0]); };
+logoInput.onchange=e=>{
+    const r=new FileReader();
+    r.onload=()=>{logo.src=r.result; localStorage.setItem("logo",r.result);}
+    r.readAsDataURL(e.target.files[0]);
+};
 
 // ================= TITULO =================
-const projectName=document.getElementById("projectName");
 projectName.textContent=localStorage.getItem("title")||projectName.textContent;
 projectName.oninput=()=>localStorage.setItem("title",projectName.textContent);
 
 // ================= EDITOR =================
-const editor=document.getElementById("editor");
-const progress=document.getElementById("progress");
-let finished=false;
 function crearLinea(){
     const l=document.createElement("div");
     l.className="linea baja";
@@ -435,19 +451,19 @@ function crearLinea(){
     `;
     editor.appendChild(l);
 }
-function eliminarLinea(btn){btn.parentElement.remove();updateProgress();}
+function eliminarLinea(btn){btn.parentElement.remove(); updateProgress();}
 function setPrio(s){const l=s.parentElement;l.classList.remove("alta","media","baja");l.classList.add(s.value);}
-function toggleCheck(c){c.classList.toggle("completo");c.textContent=c.textContent==="☐"?"✔":"☐";updateProgress();}
+function toggleCheck(c){c.classList.toggle("completo");c.textContent=c.textContent==="☐"?"✔":"☐"; updateProgress();}
 function updateProgress(){
     const t=document.querySelectorAll(".check").length;
     const d=document.querySelectorAll(".check.completo").length;
     progress.style.width=(d/t*100||0)+"%";
-    if(d===t && t>0 && !finished){finished=true;finish.style.display="flex";}
+    if(d===t && t>0 && !finished){finished=true; finish.style.display="flex";}
 }
-for(let i=0;i<3;i++)crearLinea();
+for(let i=0;i<3;i++) crearLinea();
 
 // ================= POMODORO =================
-let time=1500,run=false,int;
+let time=1500, run=false, int;
 const timeEl=document.getElementById("time");
 const playBtn=document.getElementById("playBtn");
 function updateTime(){timeEl.textContent=String(Math.floor(time/60)).padStart(2,"0")+":"+String(time%60).padStart(2,"0");}
@@ -480,7 +496,9 @@ function cargarProyecto(){
         l.querySelector(".texto").innerHTML=item.texto;
         l.querySelector(".prio").value=item.prio;
         setPrio(l.querySelector(".prio"));
-        if(item.check) l.querySelector(".check").classList.add("completo"); l.querySelector(".check").textContent=item.check?"✔":"☐";
+        const check=l.querySelector(".check");
+        if(item.check) check.classList.add("completo");
+        check.textContent = item.check ? "✔" : "☐";
     });
     updateProgress();
     sidebar.style.left="-280px";
@@ -516,7 +534,7 @@ function guardarConfig(){
     localStorage.setItem("title",configName.value);
     if(configLogo.files[0]){
         const r=new FileReader();
-        r.onload=()=>{logo.src=r.result;localStorage.setItem("logo",r.result);}
+        r.onload=()=>{logo.src=r.result; localStorage.setItem("logo",r.result);}
         r.readAsDataURL(configLogo.files[0]);
     }
     if(themeSelect.value=="light"){document.body.style.background="#f0f0f0";document.body.style.color="#111";localStorage.setItem("theme","light");}
@@ -526,14 +544,6 @@ function guardarConfig(){
 if(localStorage.getItem("theme")=="light"){document.body.style.background="#f0f0f0";document.body.style.color="#111";}
 
 // ================= LUA CONSOLA =================
-const luaConsole=document.getElementById("luaConsoleFull");
-const luaCloseBtn=document.querySelector(".lua-close");
-const luaSaveBtn=document.querySelector(".lua-save");
-const luaNewBtn=document.querySelector(".lua-new");
-const luaLoadBtn=document.querySelector(".lua-load");
-let luaScripts=JSON.parse(localStorage.getItem("luaScripts")||"{}");
-let currentLuaTitle="Script1";
-
 function abrirLuaFull(){
     luaConsole.style.display="block";
     luaCloseBtn.style.display="inline-block";
@@ -581,8 +591,6 @@ function cargarLuaScript(){
         aplicarResaltado();
     }
 }
-
-// Resaltado simple Lua
 function aplicarResaltado(){
     let code=luaConsole.innerText;
     code=code.replace(/(&)/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
@@ -594,18 +602,12 @@ function aplicarResaltado(){
     code=code.replace(/\b\d+(\.\d+)?\b/g,'<span class="lua-number">$&</span>');
     luaConsole.innerHTML=code;
 }
-
-// Tab = 4 espacios
 luaConsole.addEventListener("keydown",e=>{
-    if(e.key==="Tab"){e.preventDefault();
-        document.execCommand('insertText',false,'    ');
-        aplicarResaltado();
-    }
+    if(e.key==="Tab"){e.preventDefault();document.execCommand('insertText',false,'    ');aplicarResaltado();}
 });
 luaConsole.addEventListener("input",aplicarResaltado);
 
 // ================= LINK HEADER DERECHO =================
-const headerButtons=document.getElementById("headerButtons");
 const linkBtn=document.createElement("button");
 linkBtn.textContent="🔗 Link";
 linkBtn.className="header-btn";
@@ -630,4 +632,5 @@ function guardarLink(){
 </script>
 </body>
 </html>
+
 
