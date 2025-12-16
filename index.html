@@ -3,10 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BASSBOOSDev</title>
 <link rel="icon" href="icon.png" type="image/png">
 <link rel="manifest" href="manifest.json">
-
+<title>BASSBOOSDev</title>
 <style>
 /* ================= GENERAL ================= */
 body{
@@ -14,15 +13,13 @@ body{
     font-family:Consolas,monospace;
     background:linear-gradient(135deg,#1b1f2a,#12151c);
     color:#eaeaea;
-    min-height:100vh;
-    display:flex;
-    flex-direction:column;
+    transition: background .3s, color .3s;
 }
 
 /* ========== HEADER ========== */
 header{
     display:grid;
-    grid-template-columns:auto 1fr auto;
+    grid-template-columns: auto 1fr auto;
     align-items:center;
     padding:14px 20px;
     background:#11141b;
@@ -30,8 +27,6 @@ header{
     top:0;
     z-index:5;
 }
-
-/* IZQUIERDA */
 .header-left{
     display:flex;
     align-items:center;
@@ -50,8 +45,6 @@ header{
     letter-spacing:1px;
     color:#cfd6ff;
 }
-
-/* CENTRO */
 .project-name{
     text-align:center;
     font-size:18px;
@@ -59,8 +52,6 @@ header{
     color:#cfd6ff;
     word-break: break-word;
 }
-
-/* DERECHA */
 .header-buttons{
     display:flex;
     gap:10px;
@@ -75,7 +66,53 @@ header{
     white-space: nowrap;
 }
 
-/* ========== MODAL LINK ========== */
+/* ========== SIDEBAR (3 puntos) ========== */
+.sidebar-toggle{
+    position:fixed;
+    left:10px;
+    top:50%;
+    transform:translateY(-50%);
+    width:40px;
+    height:40px;
+    border-radius:8px;
+    background:#121722;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    z-index:15;
+    font-size:24px;
+}
+.sidebar{
+    position:fixed;
+    left:-280px;
+    top:0;
+    width:280px;
+    height:100%;
+    background:#0f1218;
+    padding:20px;
+    box-sizing:border-box;
+    transition: left .3s;
+    z-index:14;
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+.sidebar h3{
+    margin:0;
+    font-size:16px;
+    color:#cfd6ff;
+}
+.sidebar button{
+    background:#121722;
+    border:none;
+    color:#cfd6ff;
+    padding:10px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+/* ========== MODAL LINK / CONFIG ========== */
 .modal{
     position:fixed;
     inset:0;
@@ -83,7 +120,7 @@ header{
     display:none;
     align-items:center;
     justify-content:center;
-    z-index:10;
+    z-index:20;
 }
 .modal-box{
     background:#0f1218;
@@ -92,18 +129,18 @@ header{
     width:90%;
     max-width:340px;
 }
-.modal-box input{
+.modal-box input, .modal-box select{
     width:100%;
     padding:10px;
     border-radius:8px;
     border:none;
     background:#121722;
     color:#cfd6ff;
+    margin-bottom:10px;
 }
 .modal-actions{
     display:flex;
     gap:10px;
-    margin-top:12px;
 }
 .modal-actions button{
     flex:1;
@@ -116,9 +153,7 @@ header{
 .cancel{background:#1e2330;color:#cfd6ff;}
 
 /* ========== PROGRESS ========== */
-.progress-box{
-    margin:20px;
-}
+.progress-box{ margin:20px; }
 .progress-bar{
     height:10px;
     background:#1e2330;
@@ -187,6 +222,8 @@ header{
     background:#121722;
     font-size:24px;
 }
+
+/* ========== BOTON ELIMINAR ========== */
 .delete-btn{
     background:#ff4d4d;
     border:none;
@@ -233,7 +270,7 @@ header{
 
 /* ========== FOOTER ================= */
 .footer{
-    margin-top:20px;
+    margin-top:120px;
     background:#0f1218;
     padding:14px;
     text-align:center;
@@ -256,25 +293,19 @@ header{
     color:#cfd6ff;
     text-decoration:none;
     font-size:14px;
+}
 
-/* ================== MEDIA QUERIES CELULAR ================== */
-@media (max-width: 768px){
-    header{
-        grid-template-columns: auto 1fr auto;
-        padding:10px;
-    }
+/* ================== MEDIA QUERIES ================== */
+@media (max-width:768px){
+    header{grid-template-columns:1fr 1fr; padding:10px;}
+    .header-left{gap:5px;}
     .header-left img{width:28px;height:28px;}
     .project-name{font-size:16px;}
+    .header-buttons{gap:5px; justify-content:flex-end;}
     .header-btn{padding:5px 10px;font-size:14px;}
-    .pomodoro{
-        flex-direction:column;
-        align-items:center;
-    }
+    .pomodoro{flex-direction:column;align-items:center;}
     .editor{margin:10px;}
-    .linea{
-        grid-template-columns:30px 1fr 80px 30px 40px;
-        padding:6px;
-    }
+    .linea{grid-template-columns:30px 1fr 80px 30px 40px;padding:6px;}
     .add{padding:10px;font-size:20px;}
     .delete-btn{padding:2px 6px;font-size:12px;}
 }
@@ -282,6 +313,16 @@ header{
 </head>
 <body>
 <canvas id="confetti"></canvas>
+
+<!-- SIDEBAR -->
+<div class="sidebar-toggle">⋮</div>
+<div class="sidebar" id="sidebar">
+    <h3>Proyecto</h3>
+    <button onclick="guardarProyecto()">💾 Guardar Proyecto</button>
+    <button onclick="cargarProyecto()">📂 Cargar Proyecto</button>
+    <h3>Configuración</h3>
+    <button onclick="abrirConfig()">⚙ Configuración</button>
+</div>
 
 <header>
     <div class="header-left" onclick="logoInput.click()">
@@ -311,8 +352,9 @@ header{
 <div class="editor" id="editor"></div>
 <div class="add" onclick="crearLinea()">＋</div>
 
+<!-- MODAL LINK / CONFIG -->
 <div class="modal" id="modal">
-    <div class="modal-box">
+    <div class="modal-box" id="modalBox">
         <input id="urlInput" placeholder="URL del proyecto Roblox">
         <div class="modal-actions">
             <button class="accept" onclick="saveURL()">Aceptar</button>
@@ -321,6 +363,22 @@ header{
     </div>
 </div>
 
+<div class="modal" id="configModal">
+    <div class="modal-box">
+        <input type="text" id="configName" placeholder="Nombre del proyecto">
+        <input type="file" id="configLogo" accept="image/*">
+        <select id="themeSelect">
+            <option value="dark">🌙 Oscuro</option>
+            <option value="light">☀ Claro</option>
+        </select>
+        <div class="modal-actions">
+            <button class="accept" onclick="guardarConfig()">Guardar</button>
+            <button class="cancel" onclick="cerrarConfig()">Cerrar</button>
+        </div>
+    </div>
+</div>
+
+<!-- FELICIDADES -->
 <div id="finish">
     <div>
         🎉 ¡FELICIDADES! PROYECTO COMPLETADO 🎉
@@ -329,6 +387,7 @@ header{
     </div>
 </div>
 
+<!-- FOOTER -->
 <div class="footer">
     <div class="marquee">
         🎮 Terminá lo que empezás • 🚀 Cada línea cuenta • 🧠 Aprender es avanzar • 🏆 Publicá sin miedo
@@ -344,7 +403,16 @@ header{
 </div>
 
 <script>
+// =================== JS ===================
+
+// SIDEBAR
+const sidebar=document.getElementById("sidebar");
+const toggle=document.querySelector(".sidebar-toggle");
+toggle.onclick=()=>sidebar.style.left=(sidebar.style.left=="0px"?"-280px":"0px");
+
 // LOGO
+const logo=document.getElementById("logo");
+const logoInput=document.getElementById("logoInput");
 logo.src=localStorage.getItem("logo")||"";
 logoInput.onchange=e=>{
     const r=new FileReader();
@@ -353,10 +421,14 @@ logoInput.onchange=e=>{
 };
 
 // TITULO
+const projectName=document.getElementById("projectName");
 projectName.textContent=localStorage.getItem("title")||projectName.textContent;
 projectName.oninput=()=>localStorage.setItem("title",projectName.textContent);
 
 // LINK
+const modal=document.getElementById("modal");
+const openBtn=document.getElementById("openBtn");
+const urlInput=document.getElementById("urlInput");
 function openModal(){modal.style.display="flex";}
 function closeModal(){modal.style.display="none";}
 function saveURL(){localStorage.setItem("url",urlInput.value);openBtn.style.display="inline-block";closeModal();}
@@ -367,6 +439,7 @@ if(localStorage.getItem("url"))openBtn.style.display="inline-block";
 const editor=document.getElementById("editor");
 const progress=document.getElementById("progress");
 let finished=false;
+
 function crearLinea(){
     const l=document.createElement("div");
     l.className="linea baja";
@@ -379,9 +452,11 @@ function crearLinea(){
             <option value="alta">🔴 Alta</option>
         </select>
         <div class="check" onclick="toggleCheck(this)">☐</div>
-        <button class="delete-btn" onclick="eliminarLinea(this)">🗑️</button>`;
+        <button class="delete-btn" onclick="eliminarLinea(this)">🗑️</button>
+    `;
     editor.appendChild(l);
 }
+
 function eliminarLinea(btn){btn.parentElement.remove();updateProgress();}
 function setPrio(s){const l=s.parentElement;l.classList.remove("alta","media","baja");l.classList.add(s.value);}
 function toggleCheck(c){c.classList.toggle("completo");c.textContent=c.textContent==="☐"?"✔":"☐";updateProgress();}
@@ -396,6 +471,7 @@ for(let i=0;i<3;i++)crearLinea();
 // POMODORO
 let time=1500,run=false,int;
 const timeEl=document.getElementById("time");
+const playBtn=document.getElementById("playBtn");
 function updateTime(){timeEl.textContent=String(Math.floor(time/60)).padStart(2,"0")+":"+String(time%60).padStart(2,"0");}
 function togglePomo(){if(!run){run=true;playBtn.textContent="⏸";int=setInterval(()=>{time--;updateTime();},1000);}else{run=false;playBtn.textContent="▶";clearInterval(int);}}
 function resetPomo(){clearInterval(int);run=false;time=1500;playBtn.textContent="▶";updateTime();}
@@ -408,17 +484,74 @@ canvas.width=innerWidth;
 canvas.height=innerHeight;
 let conf=[];
 function lanzarConfeti(){
-    for(let i=0;i<150;i++){conf.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*6+2,c:`hsl(${Math.random()*360},100%,50%)`,s:Math.random()*3+2});}
+    for(let i=0;i<150;i++){
+        conf.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*6+2,c:`hsl(${Math.random()*360},100%,50%)`,s:Math.random()*3+2});
+    }
     animar();
 }
-function animar(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    conf.forEach(p=>{ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();p.y+=p.s;if(p.y>canvas.height)p.y=0;});
-    if(conf.length)requestAnimationFrame(animar);
-}
+function animar(){ctx.clearRect(0,0,canvas.width,canvas.height);conf.forEach(p=>{ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();p.y+=p.s;if(p.y>canvas.height)p.y=0;});if(conf.length)requestAnimationFrame(animar);}
 function cerrarFinish(){finish.style.display="none";conf=[];}
-</script>
 
+// ========== SIDEBAR FUNCIONES ==========
+function guardarProyecto(){
+    const data=[];
+    document.querySelectorAll(".linea").forEach(l=>{
+        data.push({
+            texto:l.querySelector(".texto").innerHTML,
+            prio:l.querySelector(".prio").value,
+            check:l.querySelector(".check").classList.contains("completo")
+        });
+    });
+    localStorage.setItem("projectData",JSON.stringify(data));
+    alert("Proyecto guardado!");
+}
+function cargarProyecto(){
+    const data=JSON.parse(localStorage.getItem("projectData")||"[]");
+    editor.innerHTML="";
+    data.forEach(item=>{
+        crearLinea();
+        const l=editor.lastChild;
+        l.querySelector(".texto").innerHTML=item.texto;
+        l.querySelector(".prio").value=item.prio;
+        setPrio(l.querySelector(".prio"));
+        if(item.check) l.querySelector(".check").classList.add("completo"); l.querySelector(".check").textContent=item.check?"✔":"☐";
+    });
+    updateProgress();
+    sidebar.style.left="-280px";
+}
+
+// CONFIG
+const configModal=document.getElementById("configModal");
+const configName=document.getElementById("configName");
+const configLogo=document.getElementById("configLogo");
+const themeSelect=document.getElementById("themeSelect");
+function abrirConfig(){
+    configName.value=projectName.textContent;
+    themeSelect.value=localStorage.getItem("theme")||"dark";
+    configModal.style.display="flex";
+}
+function cerrarConfig(){configModal.style.display="none";}
+function guardarConfig(){
+    projectName.textContent=configName.value;
+    localStorage.setItem("title",configName.value);
+    if(configLogo.files[0]){
+        const r=new FileReader();
+        r.onload=()=>{logo.src=r.result;localStorage.setItem("logo",r.result);}
+        r.readAsDataURL(configLogo.files[0]);
+    }
+    if(themeSelect.value=="light"){
+        document.body.style.background="#f0f0f0";
+        document.body.style.color="#111";
+        localStorage.setItem("theme","light");
+    }else{
+        document.body.style.background="linear-gradient(135deg,#1b1f2a,#12151c)";
+        document.body.style.color="#eaeaea";
+        localStorage.setItem("theme","dark");
+    }
+    cerrarConfig();
+}
+if(localStorage.getItem("theme")=="light"){document.body.style.background="#f0f0f0";document.body.style.color="#111";}
+</script>
 </body>
 </html>
 
