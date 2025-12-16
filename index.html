@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="icon.png" type="image/png">
+<link rel="manifest" href="manifest.json">
 <title>BASSBOOSDev</title>
 <style>
 /* ================= GENERAL ================= */
@@ -108,11 +109,11 @@ header{
     border-radius:8px;
     cursor:pointer;
 }
-/* ========== MODALES / EDITOR ========= */
+/* ========== MODALES ========== */
 .modal{
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,0.85);
+    background:rgba(0,0,0,0.75);
     display:none;
     align-items:center;
     justify-content:center;
@@ -133,74 +134,6 @@ header{
     background:#121722;
     color:#cfd6ff;
     margin-bottom:10px;
-}
-/* ========== CONSOLA FULLSCREEN ========= */
-#luaConsoleFull{
-    position:fixed;
-    top:50px; /* deja header visible */
-    left:0;
-    width:100%;
-    height:calc(100% - 50px);
-    background:#000;
-    color:#fff;
-    font-family:Consolas,monospace;
-    font-size:14px;
-    padding:10px;
-    overflow-y:auto;
-    display:none;
-    z-index:99;
-    box-sizing:border-box;
-    white-space:pre-wrap;
-}
-.lua-close{
-    position:absolute;
-    top:5px;
-    right:10px;
-    background:#ff4d4d;
-    color:#fff;
-    border:none;
-    border-radius:6px;
-    padding:5px 10px;
-    cursor:pointer;
-    display:none;
-    z-index:101;
-}
-.lua-line{white-space:pre-wrap;}
-.lua-comment{color:#5f6a85;}
-.lua-string{color:#ffd84d;}
-.lua-number{color:#00ff9c;}
-/* ========== PROGRESS ========== */
-.progress-box{ margin:20px; }
-.progress-bar{
-    height:10px;
-    background:#1e2330;
-    border-radius:10px;
-    overflow:hidden;
-}
-.progress{
-    height:100%;
-    width:0%;
-    background:#00ff9c;
-    transition:.3s;
-}
-/* ========== POMODORO ========== */
-.pomodoro{
-    margin:20px;
-    background:#0f1218;
-    padding:14px;
-    border-radius:14px;
-    display:flex;
-    justify-content:space-between;
-    flex-wrap:wrap;
-    gap:10px;
-}
-.pomo-btn{
-    background:#121722;
-    border:none;
-    color:#cfd6ff;
-    padding:6px 14px;
-    border-radius:8px;
-    cursor:pointer;
 }
 /* ========== EDITOR ========== */
 .editor{
@@ -249,6 +182,25 @@ header{
 }
 .delete-btn:hover{
     background:#ff1a1a;
+}
+/* ========== POMODORO ========== */
+.pomodoro{
+    margin:20px;
+    background:#0f1218;
+    padding:14px;
+    border-radius:14px;
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:10px;
+}
+.pomo-btn{
+    background:#121722;
+    border:none;
+    color:#cfd6ff;
+    padding:6px 14px;
+    border-radius:8px;
+    cursor:pointer;
 }
 /* ========== FELICIDADES ========== */
 #finish{
@@ -305,20 +257,40 @@ header{
     text-decoration:none;
     font-size:14px;
 }
-/* ================== MEDIA QUERIES ================== */
-@media (max-width:768px){
-    header{grid-template-columns:1fr 1fr; padding:10px;}
-    .header-left{gap:5px;}
-    .header-left img{width:28px;height:28px;}
-    .project-name{font-size:16px;}
-    .header-buttons{gap:5px; justify-content:flex-end;}
-    .header-btn{padding:5px 10px;font-size:14px;}
-    .pomodoro{flex-direction:column;align-items:center;}
-    .editor{margin:10px;}
-    .linea{grid-template-columns:30px 1fr 80px 30px 40px;padding:6px;}
-    .add{padding:10px;font-size:20px;}
-    .delete-btn{padding:2px 6px;font-size:12px;}
+/* ========== LUA CONSOLA ================= */
+#luaConsoleFull{
+    position:fixed;
+    top:50px;
+    left:0;
+    width:100%;
+    height:calc(100% - 50px);
+    background:#0a0f1f;
+    color:#fff;
+    font-family:Consolas,monospace;
+    font-size:14px;
+    padding:10px;
+    overflow-y:auto;
+    display:none;
+    z-index:99;
+    box-sizing:border-box;
+    white-space:pre-wrap;
 }
+.lua-close, .lua-save{
+    position:absolute;
+    top:5px;
+    padding:5px 10px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    z-index:101;
+}
+.lua-close{right:10px;background:#ff4d4d;color:#fff;display:none;}
+.lua-save{right:90px;background:#00ff9c;color:#000;display:none;}
+.lua-keyword{color:#ffd700;}
+.lua-print{color:#ffb84d;}
+.lua-string{color:#00ff00;}
+.lua-comment{color:#7f8c8d;}
+.lua-number{color:#00ff9c;}
 </style>
 </head>
 <body>
@@ -328,10 +300,7 @@ header{
 <div class="sidebar-toggle">⋮</div>
 <div class="sidebar" id="sidebar">
     <h3>Proyecto</h3>
-    <button onclick="guardarProyecto()">💾 Guardar Proyecto</button>
-    <button onclick="cargarProyecto()">📂 Cargar Proyecto</button>
-    <h3>Configuración</h3>
-    <button onclick="abrirConfig()">⚙ Configuración</button>
+    <button onclick="abrirLuaFull()">🖥 Abrir Consola Lua</button>
 </div>
 
 <header>
@@ -341,10 +310,6 @@ header{
         <input type="file" id="logoInput" hidden accept="image/*">
     </div>
     <div class="project-name" contenteditable id="projectName">Título del proyecto</div>
-    <div class="header-buttons">
-        <button class="header-btn" onclick="openModal()">🔗 Link</button>
-        <button class="header-btn" id="openBtn" style="display:none" onclick="openURL()">🚀 Abrir</button>
-    </div>
 </header>
 
 <div class="progress-box">
@@ -362,32 +327,6 @@ header{
 <div class="editor" id="editor"></div>
 <div class="add" onclick="crearLinea()">＋</div>
 
-<!-- MODALES -->
-<div class="modal" id="modal">
-    <div class="modal-box" id="modalBox">
-        <input id="urlInput" placeholder="URL del proyecto Roblox">
-        <div class="modal-actions">
-            <button class="accept" onclick="saveURL()">Aceptar</button>
-            <button class="cancel" onclick="closeModal()">Cancelar</button>
-        </div>
-    </div>
-</div>
-
-<div class="modal" id="configModal">
-    <div class="modal-box">
-        <input type="text" id="configName" placeholder="Nombre del proyecto">
-        <input type="file" id="configLogo" accept="image/*">
-        <select id="themeSelect">
-            <option value="dark">🌙 Oscuro</option>
-            <option value="light">☀ Claro</option>
-        </select>
-        <div class="modal-actions">
-            <button class="accept" onclick="guardarConfig()">Guardar</button>
-            <button class="cancel" onclick="cerrarConfig()">Cerrar</button>
-        </div>
-    </div>
-</div>
-
 <!-- FELICIDADES -->
 <div id="finish">
     <div>
@@ -397,9 +336,10 @@ header{
     </div>
 </div>
 
-<!-- CONSOLA LUA FULLSCREEN -->
+<!-- LUA CONSOLA -->
 <div id="luaConsoleFull" contenteditable="true"></div>
 <button class="lua-close" onclick="cerrarLuaFull()">Cerrar</button>
+<button class="lua-save" onclick="guardarLuaScript()">Guardar Script</button>
 
 <!-- FOOTER -->
 <div class="footer">
@@ -417,42 +357,26 @@ header{
 </div>
 
 <script>
-// =================== JS ===================
-// Sidebar toggle
+// ================= SIDEBAR =================
 const sidebar=document.getElementById("sidebar");
 const toggle=document.querySelector(".sidebar-toggle");
 toggle.onclick=()=>sidebar.style.left=(sidebar.style.left=="0px"?"-280px":"0px");
 
-// Logo
+// ================= LOGO =================
 const logo=document.getElementById("logo");
 const logoInput=document.getElementById("logoInput");
 logo.src=localStorage.getItem("logo")||"";
-logoInput.onchange=e=>{
-    const r=new FileReader();
-    r.onload=()=>{logo.src=r.result;localStorage.setItem("logo",r.result);}
-    r.readAsDataURL(e.target.files[0]);
-};
+logoInput.onchange=e=>{const r=new FileReader();r.onload=()=>{logo.src=r.result;localStorage.setItem("logo",r.result);} ; r.readAsDataURL(e.target.files[0]); };
 
-// Project Title
+// ================= TITULO =================
 const projectName=document.getElementById("projectName");
 projectName.textContent=localStorage.getItem("title")||projectName.textContent;
 projectName.oninput=()=>localStorage.setItem("title",projectName.textContent);
 
-// Link Modal
-const modal=document.getElementById("modal");
-const openBtn=document.getElementById("openBtn");
-const urlInput=document.getElementById("urlInput");
-function openModal(){modal.style.display="flex";}
-function closeModal(){modal.style.display="none";}
-function saveURL(){localStorage.setItem("url",urlInput.value);openBtn.style.display="inline-block";closeModal();}
-function openURL(){window.open(localStorage.getItem("url"),"_blank");}
-if(localStorage.getItem("url"))openBtn.style.display="inline-block";
-
-// Editor
+// ================= EDITOR =================
 const editor=document.getElementById("editor");
 const progress=document.getElementById("progress");
 let finished=false;
-
 function crearLinea(){
     const l=document.createElement("div");
     l.className="linea baja";
@@ -469,7 +393,6 @@ function crearLinea(){
     `;
     editor.appendChild(l);
 }
-
 function eliminarLinea(btn){btn.parentElement.remove();updateProgress();}
 function setPrio(s){const l=s.parentElement;l.classList.remove("alta","media","baja");l.classList.add(s.value);}
 function toggleCheck(c){c.classList.toggle("completo");c.textContent=c.textContent==="☐"?"✔":"☐";updateProgress();}
@@ -481,7 +404,7 @@ function updateProgress(){
 }
 for(let i=0;i<3;i++)crearLinea();
 
-// Pomodoro
+// ================= POMODORO =================
 let time=1500,run=false,int;
 const timeEl=document.getElementById("time");
 const playBtn=document.getElementById("playBtn");
@@ -490,80 +413,55 @@ function togglePomo(){if(!run){run=true;playBtn.textContent="⏸";int=setInterva
 function resetPomo(){clearInterval(int);run=false;time=1500;playBtn.textContent="▶";updateTime();}
 updateTime();
 
-// Config modal
-const configModal=document.getElementById("configModal");
-const configName=document.getElementById("configName");
-const configLogo=document.getElementById("configLogo");
-const themeSelect=document.getElementById("themeSelect");
-function abrirConfig(){
-    configName.value=projectName.textContent;
-    themeSelect.value=localStorage.getItem("theme")||"dark";
-    configModal.style.display="flex";
-}
-function cerrarConfig(){configModal.style.display="none";}
-function guardarConfig(){
-    projectName.textContent=configName.value;
-    localStorage.setItem("title",configName.value);
-    if(configLogo.files[0]){
-        const r=new FileReader();
-        r.onload=()=>{logo.src=r.result;localStorage.setItem("logo",r.result);}
-        r.readAsDataURL(configLogo.files[0]);
-    }
-    if(themeSelect.value=="light"){
-        document.body.style.background="#f0f0f0";
-        document.body.style.color="#111";
-        localStorage.setItem("theme","light");
-    }else{
-        document.body.style.background="linear-gradient(135deg,#1b1f2a,#12151c)";
-        document.body.style.color="#eaeaea";
-        localStorage.setItem("theme","dark");
-    }
-    cerrarConfig();
-}
-if(localStorage.getItem("theme")=="light"){document.body.style.background="#f0f0f0";document.body.style.color="#111";}
-
-// FELICIDADES
+// ================= FELICIDADES =================
 function cerrarFinish(){finish.style.display="none";}
 
 // ================= LUA CONSOLA =================
-const luaConsoleFull=document.getElementById("luaConsoleFull");
+const luaConsole=document.getElementById("luaConsoleFull");
 const luaCloseBtn=document.querySelector(".lua-close");
+const luaSaveBtn=document.querySelector(".lua-save");
+
 function abrirLuaFull(){
-    luaConsoleFull.style.display="block";
+    luaConsole.style.display="block";
     luaCloseBtn.style.display="block";
-    luaConsoleFull.focus();
+    luaSaveBtn.style.display="block";
+    luaConsole.focus();
+    luaConsole.innerText = localStorage.getItem("luaScript") || "";
+    resaltarLua();
 }
+
 function cerrarLuaFull(){
-    luaConsoleFull.style.display="none";
+    luaConsole.style.display="none";
     luaCloseBtn.style.display="none";
+    luaSaveBtn.style.display="none";
 }
-// Simular colores Lua
-luaConsoleFull.addEventListener("input",()=>{
-    let content=luaConsoleFull.innerText;
-    // escapamos HTML
-    content=content.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-    // comentarios -- y --
-    content=content.replace(/(--.*)/g,'<span class="lua-comment">$1</span>');
-    // strings "" ''
-    content=content.replace(/(\".*?\"|\'.*?\')/g,'<span class="lua-string">$1</span>');
-    // números
-    content=content.replace(/\b(\d+(\.\d+)?)\b/g,'<span class="lua-number">$1</span>');
-    luaConsoleFull.innerHTML=content;
-    placeCaretAtEnd(luaConsoleFull);
-    luaConsoleFull.scrollTop=luaConsoleFull.scrollHeight;
+
+function guardarLuaScript(){
+    localStorage.setItem("luaScript", luaConsole.innerText);
+    alert("Script guardado!");
+}
+
+luaConsole.addEventListener("input",()=>{
+    resaltarLua();
+    luaConsole.scrollTop = luaConsole.scrollHeight;
 });
-function placeCaretAtEnd(el) {
-    el.focus();
-    if(typeof window.getSelection!="undefined" && typeof document.createRange!="undefined"){
-        let range=document.createRange();
-        range.selectNodeContents(el);
-        range.collapse(false);
-        let sel=window.getSelection();
-        sel.removeAllRanges();
-        sel.addRange(range);
-    }
+
+function resaltarLua(){
+    let code = luaConsole.innerText;
+    code = code.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    code = code.replace(/(--.*)/g,'<span class="lua-comment">$1</span>');
+    code = code.replace(/(\".*?\"|\'.*?\')/g,'<span class="lua-string">$1</span>');
+    code = code.replace(/\b(\d+(\.\d+)?)\b/g,'<span class="lua-number">$1</span>');
+    code = code.replace(/\b(print)\b/g,'<span class="lua-print">$1</span>');
+    const keywords = ["and","break","do","else","elseif","end","false","for","function","if","in","local","nil","not","or","repeat","return","then","true","until","while"];
+    keywords.forEach(k=>{const re = new RegExp("\\b"+k+"\\b","g"); code = code.replace(re,`<span class="lua-keyword">${k}</span>`);});
+    luaConsole.innerHTML = code;
+    placeCaretAtEnd(luaConsole);
 }
+function placeCaretAtEnd(el){el.focus();if(typeof window.getSelection!="undefined" && typeof document.createRange!="undefined"){let range=document.createRange();range.selectNodeContents(el);range.collapse(false);let sel=window.getSelection();sel.removeAllRanges();sel.addRange(range);}}
 </script>
 </body>
 </html>
+
+
 
