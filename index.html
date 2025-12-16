@@ -14,6 +14,9 @@ body{
     font-family:Consolas,monospace;
     background:linear-gradient(135deg,#1b1f2a,#12151c);
     color:#eaeaea;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
 }
 
 /* ========== HEADER ========== */
@@ -171,7 +174,7 @@ header{
     gap:5px;
 }
 .texto{outline:none;color:#cfd6ff;}
-.texto:empty::before{content:"Escribí acá...";color:#5f6a85;}
+.texto:empty::before{content:"Escribí acá...";color:#5f6a85;white-space:nowrap;}
 
 .prio{
     background:#121722;
@@ -242,12 +245,10 @@ header{
 
 /* ========== FOOTER ================= */
 .footer{
-    margin-top:120px;
+    margin-top:auto;
     background:#0f1218;
     padding:14px;
     text-align:center;
-    position:sticky;
-    bottom:0;
 }
 
 .marquee{
@@ -384,28 +385,29 @@ header{
 
 <script>
 // =================== JS ===================
+
 // LOGO
-logo.src=localStorage.getItem("logo")||"";
-logoInput.onchange=e=>{
-    const r=new FileReader();
-    r.onload=()=>{logo.src=r.result;localStorage.setItem("logo",r.result);}
+logo.src = localStorage.getItem("logo") || "";
+logoInput.onchange = e => {
+    const r = new FileReader();
+    r.onload = () => {logo.src = r.result; localStorage.setItem("logo", r.result);}
     r.readAsDataURL(e.target.files[0]);
 };
 
 // TITULO
-projectName.textContent=localStorage.getItem("title")||projectName.textContent;
-projectName.oninput=()=>localStorage.setItem("title",projectName.textContent);
+projectName.textContent = localStorage.getItem("title") || projectName.textContent;
+projectName.oninput = () => localStorage.setItem("title", projectName.textContent);
 
 // LINK
 function openModal(){modal.style.display="flex";}
 function closeModal(){modal.style.display="none";}
 function saveURL(){
-    localStorage.setItem("url",urlInput.value);
+    localStorage.setItem("url", urlInput.value);
     openBtn.style.display="inline-block";
     closeModal();
 }
-function openURL(){window.open(localStorage.getItem("url"),"_blank");}
-if(localStorage.getItem("url"))openBtn.style.display="inline-block";
+function openURL(){window.open(localStorage.getItem("url"), "_blank");}
+if(localStorage.getItem("url")) openBtn.style.display="inline-block";
 
 // EDITOR
 const editor=document.getElementById("editor");
@@ -429,23 +431,26 @@ function crearLinea(){
     editor.appendChild(l);
 }
 
-function eliminarLinea(btn){btn.parentElement.remove();updateProgress();}
-function setPrio(s){const l=s.parentElement;l.classList.remove("alta","media","baja");l.classList.add(s.value);}
-function toggleCheck(c){c.classList.toggle("completo");c.textContent=c.textContent==="☐"?"✔":"☐";updateProgress();}
+function eliminarLinea(btn){btn.parentElement.remove(); updateProgress();}
+function setPrio(s){const l=s.parentElement;l.classList.remove("alta","media","baja"); l.classList.add(s.value);}
+function toggleCheck(c){c.classList.toggle("completo"); c.textContent = c.textContent==="☐"?"✔":"☐"; updateProgress();}
 function updateProgress(){
     const t=document.querySelectorAll(".check").length;
     const d=document.querySelectorAll(".check.completo").length;
     progress.style.width=(d/t*100||0)+"%";
-    if(d===t && t>0 && !finished){finished=true;finish.style.display="flex";lanzarConfeti();}
+    if(d===t && t>0 && !finished){finished=true; finish.style.display="flex"; lanzarConfeti();}
 }
-for(let i=0;i<3;i++)crearLinea();
+for(let i=0;i<3;i++) crearLinea();
 
 // POMODORO
-let time=1500,run=false,int;
+let time=1500, run=false, int;
 const timeEl=document.getElementById("time");
 function updateTime(){timeEl.textContent=String(Math.floor(time/60)).padStart(2,"0")+":"+String(time%60).padStart(2,"0");}
-function togglePomo(){if(!run){run=true;playBtn.textContent="⏸";int=setInterval(()=>{time--;updateTime();},1000);}else{run=false;playBtn.textContent="▶";clearInterval(int);}}
-function resetPomo(){clearInterval(int);run=false;time=1500;playBtn.textContent="▶";updateTime();}
+function togglePomo(){
+    if(!run){run=true; playBtn.textContent="⏸"; int=setInterval(()=>{time--; updateTime();},1000);}
+    else{run=false; playBtn.textContent="▶"; clearInterval(int);}
+}
+function resetPomo(){clearInterval(int); run=false; time=1500; playBtn.textContent="▶"; updateTime();}
 updateTime();
 
 // CONFETI
@@ -456,16 +461,27 @@ canvas.height=innerHeight;
 let conf=[];
 function lanzarConfeti(){
     for(let i=0;i<150;i++){
-        conf.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*6+2,c:`hsl(${Math.random()*360},100%,50%)`,s:Math.random()*3+2});
+        conf.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, r:Math.random()*6+2, c:`hsl(${Math.random()*360},100%,50%)`, s:Math.random()*3+2});
     }
     animar();
 }
 function animar(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    conf.forEach(p=>{ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();p.y+=p.s;if(p.y>canvas.height)p.y=0;});
-    if(conf.length)requestAnimationFrame(animar);
+    conf.forEach(p=>{
+        ctx.fillStyle=p.c; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+        p.y+=p.s;
+        if(p.y>canvas.height) p.y=0;
+    });
+    if(conf.length) requestAnimationFrame(animar);
 }
-function cerrarFinish(){finish.style.display="none";conf=[];}
+function cerrarFinish(){finish.style.display="none"; conf=[];}
+
+// Ajustar canvas al redimensionar
+window.addEventListener('resize', ()=>{
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+});
+
 </script>
 </body>
 </html>
